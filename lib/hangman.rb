@@ -6,6 +6,7 @@
   - redraw board with guess - all guesses
   - show wrong letters 
   - show left guesses
+  - 
 =end
 
 # |---|

@@ -4,6 +4,8 @@
   - get guess of the player
   - test letter on secret
   - redraw board with guess - all guesses
+  - show wrong letters 
+  - show left guesses
 =end
 
 # |---|
@@ -12,11 +14,13 @@
 # |  / \
 
 require "pry"
+require_relative "hangman_figures.rb"
 
+# print draw_hangman_figure(3)
 
 class Hangman
   attr_reader :secret_word
-  attr_accessor :guess, :wrong_letters_guessed
+  attr_accessor :guess, :wrong_letters_guessed, :rounds
 
   def initialize#(name)
     # @name = name
@@ -41,6 +45,7 @@ class Hangman
     end
     @guess = char_spaces.strip
     print char_spaces.strip
+    @rounds = 0
 
     # binding.pry
 
@@ -50,11 +55,10 @@ class Hangman
   def get_letter_guess
     letter_guess = ""
 
-    until letter_guess.length == 1 && letter_guess[0].match?(/[a-zç]/) || letter_guess == @secret_word
+    until letter_guess.length == 1 && letter_guess[0].match?(/[a-zçãáéíóú]/) || letter_guess == @secret_word
       puts "\nChoose a letter between 'a' and 'z':"
       letter_guess = gets.chomp
     end
-
 
     test_letter(letter_guess)
   end
@@ -68,43 +72,55 @@ class Hangman
 
     else
 
+      @rounds += 1
       puts "\n'#{letter}' is not included in Secret Word"
-      @wrong_letters_guessed << letter if @secret_word.include?(letter) == false
+      @wrong_letters_guessed << letter #if @secret_word.include?(letter) == false
       @wrong_letters_guessed.uniq!
+      puts "Letters wrongly guessed: #{@wrong_letters_guessed.join(", ")}"
+
       # binding.pry
     end
-
-  end
-
-  def fill_letter(letter)
-    array_secret = @secret_word.strip.split("")
-    array_guess = @guess.gsub(" ", "").split("")
-
-    # binding.pry
-    array_secret.each_with_index do |char, idx|
-      if char == letter
-        array_guess[idx] = letter
-      end
-    end
-    @guess = array_guess.join
-    update_game(array_guess)
     check_win
   end
 
+  def fill_letter(letter)
 
-  def update_game(current_guess)
-    current_guess.each { |char| print "#{char} " }
+    array_secret = @secret_word.strip.split("")
+    array_guess = @guess.gsub(" ", "").split("")
+
+    array_secret.each_with_index do |char, idx|
+      array_guess[idx] = letter if char == letter
+    end
+    @guess = array_guess.join
+
+    # update_game(array_guess)
+
+    # binding.pry
+  end
+
+
+  def update_game(new_guess)
+  	guess = new_guess.split("")
+    puts "Game so far:"
+    # binding.pry
+    guess.each { |char| print "#{char} " }
     # binding.pry
 
   end
 
   def check_win
     if @secret_word == @guess
-      puts "\nYou won!"
+      puts "\nYou won! Secret word is #{@secret_word.upcase}."
+      exit
     else
-      puts "\nHaven't found the secret word yet. Try another letter"
-      get_letter_guess
+      puts "#{@rounds} wrong guesses. Make it 6 and you lose."
+      puts "Try another letter"
     end
+
+
+    update_game(@guess.gsub(" ", ""))
+    get_letter_guess
+
   end
 
 

@@ -6,22 +6,17 @@
   - redraw board with guess - all guesses
   - show wrong letters 
   - show left guesses
-  - 
+  -  
 =end
-
-# |---|
-# |   O
-# |  /|\
-# |  / \
 
 require "pry"
 require_relative "hangman_figures.rb"
 
-# print draw_hangman_figure(3)
-
 class Hangman
   attr_reader :secret_word
   attr_accessor :guess, :wrong_letters_guessed, :rounds
+
+  TITLE = "==== HANGMAN GAME =====\n\n\n"
 
   def initialize#(name)
     # @name = name
@@ -36,26 +31,34 @@ class Hangman
   private
 
   def set_game(secret_word, guess)
-  	system("clear")
-    puts
-    count = secret_word.length
+    @rounds = 0
+    system("clear") || system("cls")
+    print TITLE
+    print "#{draw_hangman_figure(@rounds)}   "
+    print_initial_guess
+    print @guess
+
+    puts "\n\nThe Secret Word has #{secret_word.length} letters.\n"
+    get_letter_guess
+  end
+
+  def print_initial_guess
+  	count = @secret_word.length
     char_spaces = ""
     while count > 0
       char_spaces +=  "_ "
       count -= 1
     end
-    @guess = char_spaces.strip
-    print char_spaces.strip
-    @rounds = 0
 
-    puts "\nThe Secret Word has #{secret_word.length} letters.\n\n #{draw_hangman_figure(@rounds).ljust(0)}"
-    get_letter_guess
+    @guess = char_spaces.strip
   end
 
   def get_letter_guess
     letter_guess = ""
 
-    until letter_guess.length == 1 && letter_guess[0].match?(/[a-zçãáéíóú]/) || letter_guess == @secret_word
+    # until letter_guess.length == 1 && letter_guess[0].match?(/[a-zçãáêéíóôú]/) || letter_guess == @secret_word
+    until letter_guess.length == 1 && letter_guess[0].match?(/[a-z]/) || letter_guess == @secret_word
+
       puts "\nChoose a letter between 'a' and 'z':"
       letter_guess = gets.chomp.downcase
     end
@@ -75,7 +78,7 @@ class Hangman
       puts "\n'#{letter}' is not included in Secret Word"
       @wrong_letters_guessed << letter
       @wrong_letters_guessed.uniq!
-      puts "Letters wrongly guessed: #{@wrong_letters_guessed.join(", ").strip!}"
+
 
     end
 
@@ -97,28 +100,37 @@ class Hangman
 
   def update_game(new_guess)
     guess = new_guess.split("")
-    puts "Game so far:"
 
+    print "#{draw_hangman_figure(@rounds)}   "
     guess.each { |char| print "#{char} " }
-    print "\n#{draw_hangman_figure(@rounds)}"
 
+    puts "\n\nLetters wrongly guessed: #{@wrong_letters_guessed.join(" ").strip}\n\n"
   end
 
   def check_win
-    system("clear")
+    system("clear") || system("cls")
     if @secret_word == @guess
-      puts "\nYou won! Secret word is #{@secret_word.upcase}."
+      print TITLE
+      update_game(@guess.gsub(" ", ""))
+
+      print draw_hangman_figure(@rounds)
+      puts "\tYou won! Secret word is #{@secret_word.upcase}."
       exit
     elsif @rounds == 7
-      puts "You've lost! Secret word was #{@secret_word.upcase}."
+      print TITLE
+      update_game(@guess.gsub(" ", ""))
+
+      print draw_hangman_figure(@rounds-1)
+      puts "\tYou've lost! Secret word was #{@secret_word.upcase}.\n\n"
       exit
     else
-      puts "\n#{@rounds} wrong guesses. Make it 6 and you lose."
+      print TITLE
+      update_game(@guess.gsub(" ", ""))
+      puts "#{@rounds} wrong guesses. Make it 6 and you lose."
       puts "Try another letter"
     end
-
-    update_game(@guess.gsub(" ", ""))
     get_letter_guess
+
   end
 
 

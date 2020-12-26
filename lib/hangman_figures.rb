@@ -35,6 +35,6 @@ def draw_hangman_figure(round)
   r6 = "\t|---|\r
         |   O\r
         |  /|\\\r
-        |  / \\"
+        |  / \\ "
  end
 end

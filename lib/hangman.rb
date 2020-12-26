@@ -36,8 +36,8 @@ class Hangman
   private
 
   def set_game(secret_word, guess)
+  	system("clear")
     puts
-    puts "The Secret Word has #{secret_word.length} letters.\n\n"
     count = secret_word.length
     char_spaces = ""
     while count > 0
@@ -48,8 +48,7 @@ class Hangman
     print char_spaces.strip
     @rounds = 0
 
-    # binding.pry
-
+    puts "\nThe Secret Word has #{secret_word.length} letters.\n\n #{draw_hangman_figure(@rounds).ljust(0)}"
     get_letter_guess
   end
 
@@ -58,7 +57,7 @@ class Hangman
 
     until letter_guess.length == 1 && letter_guess[0].match?(/[a-zçãáéíóú]/) || letter_guess == @secret_word
       puts "\nChoose a letter between 'a' and 'z':"
-      letter_guess = gets.chomp
+      letter_guess = gets.chomp.downcase
     end
 
     test_letter(letter_guess)
@@ -68,19 +67,18 @@ class Hangman
   def test_letter(letter)
     if @secret_word.include?(letter)
       puts "\n'#{letter}' included in Secret Word"
-
       fill_letter(letter)
 
     else
 
       @rounds += 1
       puts "\n'#{letter}' is not included in Secret Word"
-      @wrong_letters_guessed << letter #if @secret_word.include?(letter) == false
+      @wrong_letters_guessed << letter
       @wrong_letters_guessed.uniq!
-      puts "Letters wrongly guessed: #{@wrong_letters_guessed.join(", ")}"
+      puts "Letters wrongly guessed: #{@wrong_letters_guessed.join(", ").strip!}"
 
-      # binding.pry
     end
+
     check_win
   end
 
@@ -94,34 +92,33 @@ class Hangman
     end
     @guess = array_guess.join
 
-    # update_game(array_guess)
-
-    # binding.pry
   end
 
 
   def update_game(new_guess)
-  	guess = new_guess.split("")
+    guess = new_guess.split("")
     puts "Game so far:"
-    # binding.pry
+
     guess.each { |char| print "#{char} " }
-    # binding.pry
+    print "\n#{draw_hangman_figure(@rounds)}"
 
   end
 
   def check_win
+    system("clear")
     if @secret_word == @guess
       puts "\nYou won! Secret word is #{@secret_word.upcase}."
       exit
+    elsif @rounds == 7
+      puts "You've lost! Secret word was #{@secret_word.upcase}."
+      exit
     else
-      puts "#{@rounds} wrong guesses. Make it 6 and you lose."
+      puts "\n#{@rounds} wrong guesses. Make it 6 and you lose."
       puts "Try another letter"
     end
 
-
     update_game(@guess.gsub(" ", ""))
     get_letter_guess
-
   end
 
 

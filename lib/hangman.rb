@@ -16,14 +16,11 @@ class Hangman
   attr_reader :secret_word
   attr_accessor :guess, :wrong_letters_guessed, :rounds
 
-  TITLE = "==== HANGMAN GAME =====\n\n\n"
+  TITLE = "====== HANGMAN GAME =======\n\n\n"
 
-  def initialize#(name)
-    # @name = name
+  def initialize
     @secret_word = random_secret_word.downcase
     @wrong_letters_guessed = []
-    p @secret_word
-    # binding.pry
     set_game(@secret_word, @guess)
   end
 
@@ -31,19 +28,23 @@ class Hangman
   private
 
   def set_game(secret_word, guess)
-    @rounds = 0
     system("clear") || system("cls")
     print TITLE
+    @rounds = 0
+    p @secret_word
+
     print "#{draw_hangman_figure(@rounds)}   "
-    print_initial_guess
+
+    create_guess_spaces
+
     print @guess
 
     puts "\n\nThe Secret Word has #{secret_word.length} letters.\n"
     get_letter_guess
   end
 
-  def print_initial_guess
-  	count = @secret_word.length
+  def create_guess_spaces
+    count = @secret_word.length
     char_spaces = ""
     while count > 0
       char_spaces +=  "_ "
@@ -58,7 +59,6 @@ class Hangman
 
     # until letter_guess.length == 1 && letter_guess[0].match?(/[a-zçãáêéíóôú]/) || letter_guess == @secret_word
     until letter_guess.length == 1 && letter_guess[0].match?(/[a-z]/) || letter_guess == @secret_word
-
       puts "\nChoose a letter between 'a' and 'z':"
       letter_guess = gets.chomp.downcase
     end
@@ -111,10 +111,10 @@ class Hangman
     system("clear") || system("cls")
     if @secret_word == @guess
       print TITLE
-      update_game(@guess.gsub(" ", ""))
+      puts "Letters wrongly guessed: #{@wrong_letters_guessed.join(" ").strip}\n\n"
 
       print draw_hangman_figure(@rounds)
-      puts "\tYou won! Secret word is #{@secret_word.upcase}."
+      puts "\tYou won! Secret word is #{@secret_word.upcase}.\n\n"
       exit
     elsif @rounds == 7
       print TITLE
@@ -127,7 +127,6 @@ class Hangman
       print TITLE
       update_game(@guess.gsub(" ", ""))
       puts "#{@rounds} wrong guesses. Make it 6 and you lose."
-      puts "Try another letter"
     end
     get_letter_guess
 

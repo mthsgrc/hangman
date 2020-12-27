@@ -10,7 +10,6 @@
   - implement save/load game
 =end
 
-require "pry"
 require "yaml"
 require_relative "hangman_figures.rb"
 

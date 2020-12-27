@@ -143,6 +143,7 @@ class Hangman
 
   def check_win
     if @secret_word == @guess
+      system("clear") || system("cls")
       print TITLE
       puts "Letters wrongly guessed: #{@wrong_letters_guessed.join(" ").strip}\n\n"
       print draw_hangman_figure(@count_missed_letters)

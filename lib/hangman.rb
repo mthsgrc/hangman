@@ -53,8 +53,6 @@ class Hangman
     @secret_word = state_loaded[:secret_word]
     @wrong_letters_guessed = state_loaded[:wrong_letters_guessed]
     @guess = state_loaded[:guess]
-
-    binding.pry
     update_game(@guess)
     get_letter_guess
   end
@@ -75,7 +73,7 @@ class Hangman
   end
 
   def save_game_file
-  	File.open("./saved.yaml", "r")
+    File.open("./saved.yaml", "r")
   end
 
   def new_game
